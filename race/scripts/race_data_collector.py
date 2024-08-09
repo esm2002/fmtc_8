@@ -11,7 +11,7 @@ class DataCollector:
     def __init__(self, file_base_name):
         rospy.init_node('data_collector', anonymous=True)
 
-        self.image_dir = '/media/fmtc/SAMSUNG/drivewell'
+        self.image_dir = '/path/to/save/images'
         os.makedirs(self.image_dir, exist_ok=True)
 
         self.current_image = None
@@ -28,20 +28,8 @@ class DataCollector:
         np_arr = np.frombuffer(msg.data, np.uint8)
         self.current_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
-    
     def steer_callback(self, msg):
-        # 수신한 메시지 값
-        received_value = msg.data
-        
-        # 받은 값을 1, 2, 3으로 변환하여 저장
-        if received_value <= 94:
-            self.steer_value = 3
-        elif 95 <= received_value <= 108:
-            self.steer_value = 2
-        else:
-            self.steer_value = 1
-
-        rospy.loginfo(f'Received value: {received_value}, Stored value: {self.steer_value}')
+        self.steer_value = msg.data
 
     def save_data(self):
         if self.current_image is not None and self.steer_value in [1, 2, 3]:  # 좌회전, 전진, 우회전 중인 경우에만 저장
