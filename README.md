@@ -88,7 +88,7 @@ $ rosrun test lane_masking_re.py
 
 3. obstacle-detection
 ```bash
-$ roslaunch lidar lidar_final.launch
+$ rosrun camera yolo_obstacle.py
 ```
 
 4. traffic-light-detection
@@ -99,7 +99,7 @@ $ rosrun camera traffic_light_color_decoder_final.py
 
 5. final decision
 ```bash
-$ rosrun control test_traffic_decision.py
+$ rosrun control test_traffic_decision_fixed.py
 ```
 
 6. run rosserial (connect with arduino)
