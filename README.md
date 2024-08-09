@@ -8,8 +8,8 @@
 - ROS noetic
 
 **For end - to - steer(시간측정 경기)**
-- CUDA == 12.2
-- cuDNN == 8.9.7
+- CUDA == 11.8
+- cuDNN == 8.6
 - python == 3.8.10
 - tensorflow == 2.13.1
 - torch == 2.2.1
@@ -68,9 +68,10 @@ $ catkin_make install
 2. end-to-steer
 ```bash
 $ cd ~/catkin_ws
-$ source devel/setup.bash
+$ catkin_make
 $ roslaunch race total.launch # run rosserial and camera
 $ rosrun race DecisionMaker_for_race.py
+$ rosrun race final_node.py
 ```
 ---------------------------------------------
 ### 2. 미션수행경기
@@ -81,30 +82,38 @@ $ rosrun race DecisionMaker_for_race.py
 2. lane-masking
 ```bash
 $ cd ~/catkin_ws
-$ source devel/setup.bash
+$ catkin_make
 $ roslaunch usb_cam multi_usb_cam.launch # run two camera(lane-detection and traffic-light-detection)
 $ rosrun test lane_masking_re.py
 ```
 
 3. obstacle-detection
 ```bash
+$ catkin_make
 $ rosrun camera yolo_obstacle.py
 ```
 
 4. traffic-light-detection
 ```bash
+$ catkin_make
 $ rosrun camera yolo_final.py
+
+(open new termianl)
+
+$ catkin_make
 $ rosrun camera traffic_light_color_decoder_final.py
 ```
 
 5. final decision
 ```bash
+$ catkin_make
 $ rosrun control test_traffic_decision_fixed.py
 ```
 
 6. run rosserial (connect with arduino)
 check the port name : _port:=/dev/ttyACM0 _baud:=57600
 ```bash
+$ catkin_make
 $ rosrun rosserial_python serial_node.py
 ```
 
@@ -117,12 +126,13 @@ $ rosrun rosserial_python serial_node.py
 2. parking-detection
 ```bash
 $ cd ~/catkin_ws
-$ source devel/setup.bash
+$ catkin_make
 $ roslaunch lidar lidar_parking.launch
 ```
 
 3. run rosserial (connect with arduino)
 check the port name : _port:=/dev/ttyACM0 _baud:=57600
 ```bash
+$ catkin_make
 $ rosrun rosserial_python serial_node.py
 ```
