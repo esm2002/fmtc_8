@@ -61,7 +61,7 @@ void stop_tilt() {
   motor_hold(motor_front_1, motor_front_2);
 }
 
-// 모든 모터 멈춤
+// 모터 멈춤
 void pause() {
   motor_hold(motor_right_1, motor_right_2);
   motor_hold(motor_left_1, motor_left_2);
