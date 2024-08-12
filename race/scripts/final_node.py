@@ -19,14 +19,21 @@ class ControlCommand() :
         rospy.init_node('decision', anonymous=True)
 
         rospy.Subscriber('Steer_value', Int16, self.End_to_steer_callback)
+
+         rospy.Subscriber('New_Steer_Value', Int16, self.new_steer_callback)
         
         self.Steer_value = Int16()
+
+        self.new_steer_value = Int16()
         
             
     
     def End_to_steer_callback(self, msg):
         
         self.Steer_value = msg.data
+        
+    def new_steer_callback(self, msg):
+        self.new_steer_value = msg.data
         
     def arduino_command_pub(self):
         
@@ -44,8 +51,10 @@ class ControlCommand() :
         #self.command_pub.publish(control_msg)
         print("자율주행 중입니다. ", self.Steer_value)
 
-        control_msg.data = self.Steer_value
+        control_msg.data = (self.Steer_value + self.new_steer_value)/2
 
+        if self.new_steer_value < 0 :
+            control_msg.data = self.new_steer_value
 
         self.command_pub.publish(control_msg)
 
