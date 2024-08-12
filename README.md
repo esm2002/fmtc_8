@@ -80,6 +80,7 @@ $ catkin_make
 $ roslaunch race total.launch # run rosserial and camera
 $ rosrun race keyboard_control.py
 $ rosrun race race_data_collector.py
+```
 
 ### 1. 시간측정경기
 
