@@ -60,12 +60,14 @@ $ catkin_make install
   
 ## 4. Run 
 ## upload new file
+```bash
 $ cd catkin_ws/path/to/folder
 $ ls
 (check new file name colored white)
 $ chmod +x [file_name]
 $ ls
 (check new file name colored green)
+```
 
 ### 0. collect race data
 1. upload arduino code
