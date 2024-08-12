@@ -115,6 +115,10 @@ $ rosrun test lane_masking_re.py
 $ catkin_make
 $ rosrun camera yolo_obstacle.py
 ```
+or using lidar
+```bash
+$ roslaunch lidar lidar_final.launch
+```
 
 4. traffic-light-detection
 ```bash
