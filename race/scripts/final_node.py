@@ -20,7 +20,7 @@ class ControlCommand() :
 
         rospy.Subscriber('Steer_value', Int16, self.End_to_steer_callback)
 
-         rospy.Subscriber('New_Steer_Value', Int16, self.new_steer_callback)
+        rospy.Subscriber('New_Steer_Value', Int16, self.new_steer_callback)
         
         self.Steer_value = Int16()
 
