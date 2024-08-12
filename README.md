@@ -59,6 +59,25 @@ $ catkin_make install
 ```
   
 ## 4. Run 
+## upload new file
+$ cd catkin_ws/path/to/folder
+$ ls
+(check new file name colored white)
+$ chmod +x [file_name]
+$ ls
+(check new file name colored green)
+
+### 0. collect race data
+1. upload arduino code
+: keyboard_control.ino
+
+2. end-to-steer
+```bash
+$ cd ~/catkin_ws
+$ catkin_make
+$ roslaunch race total.launch # run rosserial and camera
+$ rosrun race keyboard_control.py
+$ rosrun race race_data_collector.py
 
 ### 1. 시간측정경기
 
