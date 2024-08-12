@@ -134,7 +134,7 @@ $ rosrun camera traffic_light_color_decoder_final.py
 5. final decision
 ```bash
 $ catkin_make
-$ rosrun control test_traffic_decision_fixed.py
+$ rosrun control test_traffic_decision_3.py
 ```
 
 6. run rosserial (connect with arduino)
