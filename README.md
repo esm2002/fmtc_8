@@ -60,6 +60,29 @@ $ catkin_make install
   
 ## 4. Run 
 
+
+### 0. 시간측정 data
+
+1. upload arduino code
+: keyboard_control.ino
+
+2. end-to-steer
+```bash
+$ cd ~/catkin_ws
+$ catkin_make
+$ roslaunch race total.launch # run rosserial and camera
+
+(open new termianl)
+
+$ catkin_make
+$ rosrun race keyboard_control.py
+
+(open new termianl)
+
+$ catkin_make
+$ rosrun race_data_collector.py
+```
+---------------------------------------------
 ### 1. 시간측정경기
 
 1. upload arduino code
@@ -70,7 +93,15 @@ $ catkin_make install
 $ cd ~/catkin_ws
 $ catkin_make
 $ roslaunch race total.launch # run rosserial and camera
+
+(open new termianl)
+
+$ catkin_make
 $ rosrun race DecisionMaker_for_race.py
+
+(open new termianl)
+
+$ catkin_make
 $ rosrun race final_node.py
 ```
 ---------------------------------------------
