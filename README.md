@@ -93,6 +93,7 @@ $ cd ~/catkin_ws
 $ catkin_make
 $ roslaunch race total.launch # run rosserial and camera
 $ rosrun race DecisionMaker_for_race.py
+$ rosrun race DecisionMaker_for_race_s1.py #새로 추가한 s1 모델
 $ rosrun race final_node.py
 ```
 ---------------------------------------------
