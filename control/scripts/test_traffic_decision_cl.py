@@ -177,18 +177,16 @@ class ControlCommand() :
                 self.command_pub.publish(control_msg)
 
 
-            time_right_tilt = 6.3 - self.lidar_obstacle_y_coord * weight# 우회전 시간
+            time_right_tilt = 4.8 - self.lidar_obstacle_y_coord * weight # 직진 시간
+            print('ycoord: ', self.lidar_obstacle_y_coord)
 
             # 2. 우회전 
             print('우회전')
             control_msg.data = -15 #self.second
             print(control_msg.data)
-            start_time = rospy.get_time()
-            while(rospy.get_time()-start_time < time_right_tilt) : # 우회전 시간만큼 명령 publish
+            while (self.lidar_obstacle_detect == 1) :
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
-                #if self.front_distance<50 and cnt==1:
-                    #break
                 
                 
             # 0. 1초간 정지
@@ -198,9 +196,11 @@ class ControlCommand() :
             while(rospy.get_time()-start_time < 1) : # 1초만큼 정지
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
-                
+
+
             # 3. 직진
-            control_msg.data = 0 # 직진 -> 전방 & 사이드 센서 거리 작을떄(장애물 있을 때) 직진으로 변경
+            print('직진')
+            control_msg.data = 0 # 직진 
             """
             print("앞 거리: ",self.front_distance," 옆 거리: ", self.side_distance)
             	
@@ -221,10 +221,11 @@ class ControlCommand() :
                 time.sleep(1)
                 self.command_pub.publish(control_msg)
             """
-            print('직진')
-            while (self.lidar_obstacle_detect == 1) :
+            start_time = rospy.get_time()
+            while(rospy.get_time()-start_time < time_straight) : # 직진 시간만큼 명령 publish
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
+
 
             # 4. 우회전 이후 차선 인식 주행
 
@@ -239,7 +240,7 @@ class ControlCommand() :
             control_msg.data = -15 #self.second
             print(control_msg.data)
             start_time = rospy.get_time()
-            while(rospy.get_time()-start_time < time_right_tilt-1.5) : # 우회전 시간만큼 명령 publish
+            while(rospy.get_time()-start_time < time_right_tilt) : # 우회전 시간만큼 명령 publish
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
                 
@@ -251,12 +252,12 @@ class ControlCommand() :
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
                     
-            """        
+       
             print('좌회전')
             control_msg.data = 22 #self.first
             start_time = rospy.get_time()
             cnt=0
-            while(rospy.get_time()-start_time < time_left_tilt-1) : # 좌회전 시간만큼 명령 publish
+            while(rospy.get_time()-start_time < time_left_tilt-3) : # 좌회전 시간만큼 명령 publish
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
              
@@ -265,7 +266,7 @@ class ControlCommand() :
             start_time = rospy.get_time()
             while(rospy.get_time()-start_time < 1) : # 1초만큼 정지
                 time.sleep(0.1)
-                self.command_pub.publish(control_msg)"""
+                self.command_pub.publish(control_msg)
                 
 
                 
