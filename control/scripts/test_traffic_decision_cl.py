@@ -177,16 +177,18 @@ class ControlCommand() :
                 self.command_pub.publish(control_msg)
 
 
-            time_right_tilt = 4.8 - self.lidar_obstacle_y_coord * weight # 직진 시간
+            time_right_tilt = 4.8 - self.lidar_obstacle_y_coord * weight # 우회전 시간
             print('ycoord: ', self.lidar_obstacle_y_coord)
 
             # 2. 우회전 
             print('우회전')
             control_msg.data = -15 #self.second
-            print(control_msg.data)
-            while (self.lidar_obstacle_detect == 1) :
+            start_time = rospy.get_time()
+            while (rospy.get_time()-start_time < time_right_tilt) :
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
+                if self.lidar_obstacle_detect == 1:
+                    break
                 
                 
             # 0. 1초간 정지
@@ -225,6 +227,8 @@ class ControlCommand() :
             while(rospy.get_time()-start_time < time_straight) : # 직진 시간만큼 명령 publish
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
+                #if self.yolo_obstacle_detect == 1:
+                    #break
 
 
             # 4. 우회전 이후 차선 인식 주행
@@ -254,7 +258,7 @@ class ControlCommand() :
                     
        
             print('좌회전')
-            control_msg.data = 22 #self.first
+            control_msg.data = 15 #self.first
             start_time = rospy.get_time()
             cnt=0
             while(rospy.get_time()-start_time < time_left_tilt-3) : # 좌회전 시간만큼 명령 publish
