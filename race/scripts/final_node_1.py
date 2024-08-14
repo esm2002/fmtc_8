@@ -54,7 +54,7 @@ class ControlCommand() :
     def run(self) : 
         
         # rate = rospy.Rate(10)
-        rate = rospy.Rate(30)
+        rate = rospy.Rate(32)
         
         while not rospy.is_shutdown():
                 
