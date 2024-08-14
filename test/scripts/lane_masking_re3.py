@@ -85,7 +85,7 @@ def lane_detect(image) :
     ############### 조향값 조절을 위한 상수 ###################
 
     guide_x = 550 # 디폴트 x 값
-    guide_slope = 1.11 # 디폴트 기울기
+    guide_slope = 1.2 # 디폴트 기울기
 
     a=17 # 기울기에 따른 조향값 조절 시 가중치
     b=0.06 # 절편에 따른 조향값 조절 시 가중치
@@ -175,25 +175,25 @@ def lane_detect(image) :
     
     # 기울기와 절편에 따른 조향값 부여
     steering_a = a*(guide_slope - slope_avg)
-    if steering_a > 14: 
-      steering_a = 14
-    if steering_a < -14:
-      steering_a = -14
+    if steering_a > 17: 
+      steering_a = 17
+    if steering_a < -17:
+      steering_a = -17
     steering_b = b* (guide_x- x_value)
-    if steering_b > 14:
-      steering_b = 14
-    if steering_b < -14:
-      steering_b = -14
+    if steering_b > 17:
+      steering_b = 17
+    if steering_b < -17:
+      steering_b = -17
 
     steering = steering_a + steering_b
     print('steering :', steering, 'steering_a :', steering_a, 'steering_b :', steering_b)
     
     # 출력이 최대 조향각을 넘을 경우
-    if(steering > 14) :
-      steering = 14
+    if(steering > 17) :
+      steering = 17
       
-    if(steering < -14) :
-      steering = -14
+    if(steering < -17) :
+      steering = -17
 
     # 너무 많은 차선이 검출되는 경우(횡단보도)
     #if(i>5) :
