@@ -87,8 +87,8 @@ def lane_detect(image) :
     guide_x = 550 # 디폴트 x 값
     guide_slope = 1.3 # 디폴트 기울기
 
-    a=17 # 기울기에 따른 조향값 조절 시 가중치
-    b=0.06 # 절편에 따른 조향값 조절 시 가중치
+    a=30 # 기울기에 따른 조향값 조절 시 가중치
+    b=0.1 # 절편에 따른 조향값 조절 시 가중치
     
     global slope_fit # fitting된 직선의 기울기
     global y_intercept_fit  # fitting된 직선의 y 절편 
