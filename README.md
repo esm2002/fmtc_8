@@ -128,13 +128,13 @@ $ rosrun camera yolo_final.py
 (open new termianl)
 
 $ catkin_make
-$ rosrun camera traffic_light_color_decoder_final.py
+$ rosrun camera traffic_light_color_decoder_YELLOW.py
 ```
 
 5. final decision
 ```bash
 $ catkin_make
-$ rosrun control test_traffic_decision_3.py
+$ rosrun control test_traffic_decision_cl.py
 ```
 
 6. run rosserial (connect with arduino)
