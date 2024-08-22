@@ -29,21 +29,25 @@ class ControlCommand() :
     
     def __init__(self) :
         rospy.init_node('decision', anonymous=True) # decision라는 이름으로 노드 초기화
-        rospy.Subscriber('distance',Int32,self.distance_callback) # run.ino에서 publish
+        #rospy.Subscriber('distance',Int32,self.distance_callback) # run.ino에서 publish
         rospy.Subscriber('obstacle_flag',obstacle_detection,self.lidar_callback) # lidar_lanechage_flag.py 에서 stop_flag, y_coord를 받아옴
         rospy.Subscriber('obstacle_detection',Int16,self.obstacle_callback) # yolo_obstacle.py
         rospy.Subscriber('lane_detect', Float32, self.lane_masking_callback) 
         rospy.Subscriber('stop_signal',traffic_light_stop,self.traffic_light_detect_callback)
         rospy.Subscriber('crosswalk_distance', Int32, self.crosswalk_distance_callback) # crosswalk_detection_node_final.py에서 crosswalk_distance를 받아옴
         
-        self.lidar_obstacle_detect = 0 # 장애물 감지 여부
-        self.lidar_obstacle_y_coord = 0 # 장애물의 y좌표
+        self.lidar_obstacle_detect = 0 # 측면장애물 감지 여부
+        self.lidar_obstacle_y_coord = 0 # 측면장애물의 y좌표
+        
+        #ADDED
+        self.lidar_obstacle_detect2 = 0 # 정면장애물 감지 여부
+        self.lidar_obstacle_y_coord2 = 0 # 정면장애물의 y좌표
 
         self.obstacle_x=0
         self.yolo_obstacle_detect=0
 
-        self.front_distance = float('inf')  # 큰 값으로 초기화
-        self.side_distance = float('inf')  # 큰 값으로 초기화
+        #self.front_distance = float('inf')  # 큰 값으로 초기화
+        #self.side_distance = float('inf')  # 큰 값으로 초기화
         self.command_pub = rospy.Publisher('control_command_pub', Int16, queue_size=3)
         
         self.lane_masking = 0 # 조향값
@@ -53,13 +57,17 @@ class ControlCommand() :
         self.traffic_light_detect_size=0
         self.crosswalk_distance=0
 
-    def distance_callback(self,msg):
-        self.front_distance=msg.data//10000
-        self.side_distance=msg.data%10000
+    #def distance_callback(self,msg):
+        #self.front_distance=msg.data//10000
+        #self.side_distance=msg.data%10000
     	
     def lidar_callback(self,msg):
-        self.lidar_obstacle_detect = msg.flag
-        self.lidar_obstacle_y_coord = msg.y_coord
+        self.lidar_obstacle_detect = msg.flag_s
+        self.lidar_obstacle_y_coord = msg.y_coord_s
+        
+        #ADDED
+        self.lidar_obstacle_detect2 = msg.flag_f
+        self.lidar_obstacle_y_coord2 = msg.y_coord_f
         
         # 아래 주석은 장애물이 1회 감지 시 lidar 관련 노드를 종료하는 내용
 
@@ -129,15 +137,18 @@ class ControlCommand() :
         ######################### Obstacle Detection & Lane Change #############################
         
         if(self.yolo_obstacle_detect == 1 and self.ck==0) : # 장애물 감지
+        #MAYBE CHANGE
+        #if((self.yolo_obstacle_detect == 1 or self.lidar_obstacle_detect2 == 1) and self.ck==0)
             self.ck=1
             self.yolo_obstacle_detect = 0 # 장애물 감지 여부 초기화
+            #self.lidar_obstacle_detect2 = 0
             print("장애물이 감지되었습니다.")
 
             #FIXME
             weight=0.0055
-            #time_right_tilt = 6.3 # 우회전 시간
-            time_left_tilt = 7.8 - self.obstacle_x * weight # 좌회전 시간
-            time_straight = 3 # 직진 시간
+            time_right_tilt = 4 - self.obstacle_x * weight # 우회전 시간
+            time_left_tilt = 7 - self.obstacle_x * weight # 좌회전 시간
+            time_straight = 4 # 직진 시간
             ck_1=0
             print('xmin: ', self.obstacle_x)
 
@@ -152,6 +163,9 @@ class ControlCommand() :
             while(rospy.get_time()-start_time < 1) : # 1초만큼 정지
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
+               
+               
+            #time_left_tilt = 7 - self.lidar_obstacle_y_coord2 * weight # 좌회전 시간
                
             # 1. 좌회전
             print('좌회전')
@@ -176,9 +190,6 @@ class ControlCommand() :
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
 
-
-            time_right_tilt = 4.8 - self.lidar_obstacle_y_coord * weight # 우회전 시간
-            print('ycoord: ', self.lidar_obstacle_y_coord)
 
             # 2. 우회전 
             print('우회전')
@@ -227,8 +238,8 @@ class ControlCommand() :
             while(rospy.get_time()-start_time < time_straight) : # 직진 시간만큼 명령 publish
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
-                #if self.yolo_obstacle_detect == 1:
-                    #break
+                if self.lidar_obstacle_detect2 == 1:
+                    break
 
 
             # 4. 우회전 이후 차선 인식 주행
@@ -239,6 +250,9 @@ class ControlCommand() :
             while(rospy.get_time()-start_time < 1) : # 1초만큼 정지
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
+                
+            time_right_tilt = 3 + self.lidar_obstacle_y_coord2 * weight # 우회전 시간
+            print('ycoord2: ', self.lidar_obstacle_y_coord2)
             	
             print('우회전')
             control_msg.data = -15 #self.second
