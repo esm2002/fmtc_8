@@ -71,7 +71,7 @@ def lane_detect(image) :
     cross_x = n[0]-k
     cross_y = round(n[1]-k*m)
     
-    m_2 = 100 # 사선 기울기
+    m_2 = 10 # 사선 기울기
     n_2 = (640, 350) # 사선이 지나는 점
     cross_x_2 = n_2[0]-k
     cross_y_2 = round(n_2[1]-k*m_2)
@@ -87,8 +87,8 @@ def lane_detect(image) :
     guide_x = 550 # 디폴트 x 값
     guide_slope = 1.3 # 디폴트 기울기
 
-    a=30 # 기울기에 따른 조향값 조절 시 가중치
-    b=0.1 # 절편에 따른 조향값 조절 시 가중치
+    a=18 # 기울기에 따른 조향값 조절 시 가중치
+    b=0.07 # 절편에 따른 조향값 조절 시 가중치
     
     global slope_fit # fitting된 직선의 기울기
     global y_intercept_fit  # fitting된 직선의 y 절편 
@@ -114,6 +114,10 @@ def lane_detect(image) :
         for line in lines:
             x1, y1, x2, y2 = line[0]
             slope = (y2-y1)/(x2-x1)
+
+            # 검출된 직선이 너무 많을 때만 오른쪽 위쪽 직선 무시
+            #if len(lines) > 6 and ((x1 > 600 and y1 < 0) or (x2 > 600 and y2 < 0)):
+              #continue  # 이 조건을 만족하는 선은 무시
             
             #print('slope', slope)
             midpoint = ((x1+x2)/2, (y1+y2)/2) # 검출된 선의 중점 구하기
@@ -178,8 +182,8 @@ def lane_detect(image) :
     steering_b = b* (guide_x- x_value)
     if steering_b > 20 :
       steering_b = 20
-    if steering_b < -20:
-      steering_b = -20
+    if steering_b < -10:
+      steering_b = -1
 
     steering = steering_a + steering_b
     print('steering :', steering, 'steering_a :', steering_a, 'steering_b :', steering_b)
@@ -192,9 +196,9 @@ def lane_detect(image) :
       steering = -20
 
     # 너무 많은 차선이 검출되는 경우(횡단보도)
-    if(i>5) :
-       if abs(steering)>5:
-          steering = 0 # 너무 크게 조향하지 않도록 (횡단보도가 있는 상황에서 직진을 할 수 있도록 함)
+    #if(i>5) :
+       #if abs(steering)>5:
+          #steering = 0 # 너무 크게 조향하지 않도록 (횡단보도가 있는 상황에서 직진을 할 수 있도록 함)
 
     # if (i==0) :
     #    steering = -8
