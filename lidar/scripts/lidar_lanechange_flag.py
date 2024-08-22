@@ -34,6 +34,11 @@ class ObstacleDetection:
         self.obstacle_flag = 0 # Flag indicating whether an obstacle is detected
         self.y_coord = 0 # y-coordinate of the obstacle
         
+        #ADDED
+        self.count2 = 0 # Number of consecutive frames in which an obstacle is detected
+        self.obstacle_flag2 = 0 # Flag indicating whether an obstacle is detected
+        self.y_coord2 = 0 # y-coordinate of the obstacle
+        
 
     def cluster_coord_callback(self, msg):
         # Process the cluster coordinates
@@ -53,21 +58,27 @@ class ObstacleDetection:
         # Check if the number of cluster coordinates and cluster point numbers are equal
         # use 1 <= np.sqrt(x**2+y**2) <= 1.9?
         if len(self.cluster_coordinates) == len(self.cluster_point_nums):
-            obstacle_detected = any((-1<x<0 and 0<y<1 and  num >= 30 and num<=70) for (x, y), num in zip(self.cluster_coordinates, self.cluster_point_nums))
+            obstacle_detected = any((-1<x<1 and 0<y<1 and  num >= 30 and num<=70) for (x, y), num in zip(self.cluster_coordinates, self.cluster_point_nums))
+            
+            #ADDED
+            obstacle_detected2 = any((-1.5<x<0 and -1<y<1 and  num >= 30 and num<=70) for (x, y), num in zip(self.cluster_coordinates, self.cluster_point_nums))
         else:
             obstacle_detected = False
+            
+            #ADDED
+            obstacle_detected2 = False
 
         # If the conditions are met, increment the count and set the obstacle flag
         if obstacle_detected:
             self.count += 1
             # If the count exceeds 5, set the obstacle flag (5번 연속으로 장애물이 감지되면 장애물이 감지된 것으로 판단)
             # 5는 변경 가능, 0으로 두면 인식되자 마자 flag가 1로 바뀜
-            if self.count > 5: 
+            if self.count > 3: 
                 self.obstacle_flag = 1
                 
                 # Extract indices of elements that satisfy the obstacle_detected condition
                 # use 1 <= np.sqrt(value[0]**2+value[1]**2) <= 2.1?
-                indices = [index for index, value in enumerate(self.cluster_coordinates) if (-1<value[0]<0 and 0<value[1]<1 and  self.cluster_point_nums[index] >= 10)]
+                indices = [index for index, value in enumerate(self.cluster_coordinates) if (-1<value[0]<1 and 0<value[1]<1 and  self.cluster_point_nums[index] >= 10)]
 
                 # If there are indices that satisfy the condition, find the index with the maximum y-coordinate
                 if indices:
@@ -83,14 +94,45 @@ class ObstacleDetection:
             self.count = 0
             self.obstacle_flag = 0
             self.y_coord = 0
+            
+        #ADDED
+        if obstacle_detected2:
+            self.count2 += 1
+            # If the count exceeds 5, set the obstacle flag (5번 연속으로 장애물이 감지되면 장애물이 감지된 것으로 판단)
+            # 5는 변경 가능, 0으로 두면 인식되자 마자 flag가 1로 바뀜
+            if self.count2 > 3: 
+                self.obstacle_flag2 = 1
+                
+                # Extract indices of elements that satisfy the obstacle_detected condition
+                # use 1 <= np.sqrt(value[0]**2+value[1]**2) <= 2.1?
+                indices2 = [index for index, value in enumerate(self.cluster_coordinates) if (-1.5<value[0]<0 and -1<value[1]<1 and  self.cluster_point_nums[index] >= 10)]
+
+                # If there are indices that satisfy the condition, find the index with the maximum y-coordinate
+                if indices2:
+                    min_y_index2 = min(indices2, key=lambda index: self.cluster_coordinates[index][1])
+                    #change max to min
+                    #self.y_coord2 = np.arctan(self.cluster_coordinates[max_y_index][1]/self.cluster_coordinates[max_y_index][0])*180/np.pi
+                    self.y_coord2 = self.cluster_coordinates[min_y_index2][1]
+                    print(self.y_coord2)
+
+        # If the conditions are not met, reset the count and obstacle flag            
+        elif not obstacle_detected2:
+            # Reset the count and obstacle flag
+            self.count2 = 0
+            self.obstacle_flag2 = 0
+            self.y_coord2 = 0
 
     
 
     def publish_obstacle_flag(self):
         # Publish the obstacle flag
         obstacle_flag_msg = obstacle_detection()
-        obstacle_flag_msg.flag = self.obstacle_flag
-        obstacle_flag_msg.y_coord = self.y_coord
+        obstacle_flag_msg.flag_s = self.obstacle_flag
+        obstacle_flag_msg.y_coord_s = self.y_coord
+        
+        #ADDED
+        obstacle_flag_msg.flag_f = self.obstacle_flag2
+        obstacle_flag_msg.y_coord_f = self.y_coord2
         
         self.obstacle_flag_pub.publish(obstacle_flag_msg)
 
