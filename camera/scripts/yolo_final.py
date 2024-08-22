@@ -158,6 +158,7 @@ class YoloDetection:
         tl = 0 # 감지된 신호등 개수
         cw = 0 # 감지된 횡단보도 개수
         
+        
         for i in range(len(topic_to_publish)) : # 감지된 물체 개수만큼 반복
             
             if(topic_to_publish[i] == 'nothing') : # 감지된 물체가 없으면
