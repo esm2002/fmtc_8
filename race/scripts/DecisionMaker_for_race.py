@@ -51,7 +51,7 @@ def Steer_publisher():
 
     
     rospy.Subscriber('/usb_cam/image_raw/compressed', CompressedImage, image_callback) # get image from usb_cam node
-    model = tf.keras.models.load_model("/home/fmtc/catkin_ws/src/race/scripts/finemodel_v2.h5") # Our CNN model load (trained with our data)
+    model = tf.keras.models.load_model("/home/fmtc/catkin_ws/src/race/scripts/best_ss.h5") # Our CNN model load (trained with our data) finemodel_v2.h5
     rate = rospy.Rate(32)
 
     while not rospy.is_shutdown():
