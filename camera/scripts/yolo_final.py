@@ -158,6 +158,11 @@ class YoloDetection:
         tl = 0 # 감지된 신호등 개수
         cw = 0 # 감지된 횡단보도 개수
         
+        #ADDED
+        # 우선순위 높은 순서대로 신호등 색상을 체크
+        priority = {'green': 1, 'red': 2, 'TL': 3}
+        selected_topic = None
+        selected_bbox = None
         
         for i in range(len(topic_to_publish)) : # 감지된 물체 개수만큼 반복
             
@@ -167,11 +172,15 @@ class YoloDetection:
                 self._tl_bbox_pub.publish(traffic_light_info(color = "nothing", bbox_info = [])) # 신호등 color, bbox_info publish = "nothing", []
                 
             if(topic_to_publish[i] == 'green' or topic_to_publish[i] == 'red' or topic_to_publish[i] == 'TL'): # 신호등이 감지되었으면
+            
+                if selected_topic is None or priority[topic_to_publish[i]] < priority[selected_topic]: #ADDED
+                    selected_topic = topic_to_publish[i]
+                    selected_bbox = bbox_for_publish[i]
                 
                 traffic_light_info_msg = traffic_light_info() # traffic_light_info.msg 파일 참고 : color, bbox_info
             
-                traffic_light_info_msg.bbox_info = bbox_for_publish[i] # 신호등 bbox 정보 저장
-                traffic_light_info_msg.color = topic_to_publish[i] # 신호등 color 정보 저장
+                traffic_light_info_msg.bbox_info = selected_bbox # bbox_for_publish[i] # 신호등 bbox 정보 저장
+                traffic_light_info_msg.color = selected_topic # topic_to_publish[i] # 신호등 color 정보 저장
                 
                 tl+=1 # 신호등 개수 +1
                 
@@ -179,6 +188,7 @@ class YoloDetection:
                 
                 if(cw == 0) : # 횡단보도가 감지되지 않았으면
                     self._cw_bbox_pub.publish(Int32MultiArray(data=[])) # 횡단보도 bbox publish = [] (빈 list)
+                
                 
             if(topic_to_publish[i] == 'CW') : # 횡단보도가 감지되었으면
         
