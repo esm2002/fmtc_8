@@ -182,8 +182,8 @@ def lane_detect(image) :
     steering_b = b* (guide_x- x_value)
     if steering_b > 20 :
       steering_b = 20
-    if steering_b < -10:
-      steering_b = -1
+    if steering_b < -5:
+      steering_b = 0
 
     steering = steering_a + steering_b
     print('steering :', steering, 'steering_a :', steering_a, 'steering_b :', steering_b)
