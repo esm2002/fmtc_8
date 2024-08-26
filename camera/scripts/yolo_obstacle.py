@@ -61,7 +61,7 @@ class YoloDetection:
     
 
     # 사진에서 신호등 및 횡단보도 bbox 정보를 추출하는 함수
-    def filter_bbox(self, cap_img, bbox_info, min_score_thresh=0.8, obstacle_label=0, size_standard=30000): 
+    def filter_bbox(self, cap_img, bbox_info, min_score_thresh=0.8, obstacle_label=0, size_standard=27000): 
         boxes = bbox_info.xyxy.type(torch.int) # bbox coordinates
         scores = bbox_info.conf # confidence score
         classes = bbox_info.cls # class label
