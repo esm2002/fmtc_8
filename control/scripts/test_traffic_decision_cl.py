@@ -138,7 +138,7 @@ class ControlCommand() :
         
         if(self.yolo_obstacle_detect == 1 and self.ck==0) : # 장애물 감지
         #MAYBE CHANGE
-        #if((self.yolo_obstacle_detect == 1 or self.lidar_obstacle_detect2 == 1) and self.ck==0)
+        #if((self.yolo_obstacle_detect == 1 or self.lidar_obstacle_detect2 == 1) and self.ck==0) :
             self.ck=1
             self.yolo_obstacle_detect = 0 # 장애물 감지 여부 초기화
             #self.lidar_obstacle_detect2 = 0
@@ -146,9 +146,9 @@ class ControlCommand() :
 
             #FIXME
             weight=0.0055
-            time_right_tilt = 4 - self.obstacle_x * weight # 우회전 시간
-            time_left_tilt = 7 - self.obstacle_x * weight # 좌회전 시간
-            time_straight = 4 # 직진 시간
+            time_right_tilt = 5 - self.obstacle_x * weight # 우회전 시간
+            time_left_tilt = 8 - self.obstacle_x * weight # 좌회전 시간
+            time_straight = 5 # 직진 시간
             ck_1=0
             print('xmin: ', self.obstacle_x)
 
@@ -239,6 +239,7 @@ class ControlCommand() :
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
                 if self.lidar_obstacle_detect2 == 1:
+                    print("lidar detected a car")
                     break
 
 
@@ -251,7 +252,7 @@ class ControlCommand() :
                 time.sleep(0.1)
                 self.command_pub.publish(control_msg)
                 
-            time_right_tilt = 3 + self.lidar_obstacle_y_coord2 * weight # 우회전 시간
+            time_right_tilt = 4.5 + self.lidar_obstacle_y_coord2 * weight # 우회전 시간
             print('ycoord2: ', self.lidar_obstacle_y_coord2)
             	
             print('우회전')
