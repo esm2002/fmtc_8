@@ -58,10 +58,31 @@ class ObstacleDetection:
         # Check if the number of cluster coordinates and cluster point numbers are equal
         # use 1 <= np.sqrt(x**2+y**2) <= 1.9?
         if len(self.cluster_coordinates) == len(self.cluster_point_nums):
-            obstacle_detected = any((-1<x<1 and 0<y<1 and  num >= 30 and num<=70) for (x, y), num in zip(self.cluster_coordinates, self.cluster_point_nums))
             
             #ADDED
-            obstacle_detected2 = any((-1.5<x<0 and -1<y<1 and  num >= 30 and num<=70) for (x, y), num in zip(self.cluster_coordinates, self.cluster_point_nums))
+            points = [(x, y) for (x, y), num in zip(self.cluster_coordinates, self.cluster_point_nums) 
+                  if (-1 < x < 0 and 0 < y < 1 and 30 <= num <= 70)]
+        
+            # If there are any points that satisfy the condition
+            if points:
+                # Extract the x values
+                y_values = [y for x, y in points]
+            
+                # Calculate the range of x values (difference between max and min x values)
+                y_range = max(y_values) - min(y_values)
+            
+                # Set a threshold for the x range; if the range is small, consider it as obstacle detected
+                range_threshold = 0.06
+            
+                # Check if the x range is below the threshold
+                obstacle_detected = y_range < range_threshold
+            else:
+                obstacle_detected = False
+        
+            #obstacle_detected = any((-1<x<0 and 0<y<1 and  num >= 30 and num<=70) for (x, y), num in zip(self.cluster_coordinates, self.cluster_point_nums))
+            
+            #ADDED
+            obstacle_detected2 = any((-1.5<x<0 and -0.5<y<0.5 and  num >= 30 and num<=70) for (x, y), num in zip(self.cluster_coordinates, self.cluster_point_nums))
         else:
             obstacle_detected = False
             
@@ -73,12 +94,12 @@ class ObstacleDetection:
             self.count += 1
             # If the count exceeds 5, set the obstacle flag (5번 연속으로 장애물이 감지되면 장애물이 감지된 것으로 판단)
             # 5는 변경 가능, 0으로 두면 인식되자 마자 flag가 1로 바뀜
-            if self.count > 3: 
+            if self.count > 4: 
                 self.obstacle_flag = 1
                 
                 # Extract indices of elements that satisfy the obstacle_detected condition
                 # use 1 <= np.sqrt(value[0]**2+value[1]**2) <= 2.1?
-                indices = [index for index, value in enumerate(self.cluster_coordinates) if (-1<value[0]<1 and 0<value[1]<1 and  self.cluster_point_nums[index] >= 10)]
+                indices = [index for index, value in enumerate(self.cluster_coordinates) if (-1<value[0]<0 and 0<value[1]<1 and  self.cluster_point_nums[index] >= 10)]
 
                 # If there are indices that satisfy the condition, find the index with the maximum y-coordinate
                 if indices:
@@ -105,7 +126,7 @@ class ObstacleDetection:
                 
                 # Extract indices of elements that satisfy the obstacle_detected condition
                 # use 1 <= np.sqrt(value[0]**2+value[1]**2) <= 2.1?
-                indices2 = [index for index, value in enumerate(self.cluster_coordinates) if (-1.5<value[0]<0 and -1<value[1]<1 and  self.cluster_point_nums[index] >= 10)]
+                indices2 = [index for index, value in enumerate(self.cluster_coordinates) if (-1.0<value[0]<0 and -1<value[1]<1 and  self.cluster_point_nums[index] >= 10)]
 
                 # If there are indices that satisfy the condition, find the index with the maximum y-coordinate
                 if indices2:
